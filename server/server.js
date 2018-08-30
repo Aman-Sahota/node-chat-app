@@ -14,13 +14,15 @@ app.use(express.static(publicPath));
 io.on('connection',(socket)=>{
     console.log('new user connected');
 
-    socket.emit('newMessage',{
-        from:'Itachi',
-        text:'True shinobi do not seek glory, they protect from the shadows',
-    });
-
+    //socket serves a single pipeline and io serves all
+    //meaning when io.emit runs it emits to all pipelines
     socket.on('createMessage',(message)=>{
         console.log('createMessage',message);
+        io.emit('newMessage',{
+            from:message.from,
+            text:message.text,
+            createdAt:new Date().getTime()
+        });
     });
 
     socket.on('disconnect',()=>{
