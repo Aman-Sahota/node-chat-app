@@ -3,6 +3,8 @@ const express=require('express');
 const http=require('http');
 const socketIO=require('socket.io');
 
+var {generateMessage}=require('./utils/message');
+
 const publicPath=path.join(__dirname,'../public');
 var app=express();
 var port=process.env.PORT || 3000;
@@ -14,27 +16,15 @@ app.use(express.static(publicPath));
 io.on('connection',(socket)=>{
     console.log('new user connected');
 
-    socket.emit('newMessage',{
-        from:'Admin',
-        text:'Welcome to the chat app',
-        createdAt:new Date().getTime()
-    });
+    socket.emit('newMessage',generateMessage('Admin','Irasshaimase'));
 
-    socket.broadcast.emit('newMessage',{
-        from:'Admin',
-        text:'New user joined',
-        createdAt:new Date().getTime()
-    });
+    socket.broadcast.emit('newMessage',generateMessage('Admin','New user joined'));
 
     //socket serves a single pipeline and io serves all
     //meaning when io.emit runs it emits to all pipelines
     socket.on('createMessage',(message)=>{
         console.log('createMessage',message);
-        io.emit('newMessage',{
-            from:message.from,
-            text:message.text,
-            createdAt:new Date().getTime()
-        });
+        io.emit('newMessage',generateMessage(message.from,message.text));
 
         //With io.emit in the socket.on(line 19) the socket itself also got
         //newMessage alert but if we use socket.braoadcast.emit it sends to all 
