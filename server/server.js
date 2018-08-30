@@ -14,6 +14,18 @@ app.use(express.static(publicPath));
 io.on('connection',(socket)=>{
     console.log('new user connected');
 
+    socket.emit('newMessage',{
+        from:'Admin',
+        text:'Welcome to the chat app',
+        createdAt:new Date().getTime()
+    });
+
+    socket.broadcast.emit('newMessage',{
+        from:'Admin',
+        text:'New user joined',
+        createdAt:new Date().getTime()
+    });
+
     //socket serves a single pipeline and io serves all
     //meaning when io.emit runs it emits to all pipelines
     socket.on('createMessage',(message)=>{
@@ -23,6 +35,16 @@ io.on('connection',(socket)=>{
             text:message.text,
             createdAt:new Date().getTime()
         });
+
+        //With io.emit in the socket.on(line 19) the socket itself also got
+        //newMessage alert but if we use socket.braoadcast.emit it sends to all 
+        //other sockets but not to itself
+
+        // socket.broadcast.emit('newMessage',{
+        //     from:message.from,
+        //     text:message.text,
+        //     createdAt:new Date().getTime()
+        // });
     });
 
     socket.on('disconnect',()=>{
