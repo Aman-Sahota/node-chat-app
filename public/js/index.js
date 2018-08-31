@@ -27,3 +27,29 @@ var socket=io();
 
             });
         });
+
+        var locationButton=jQuery('#send-location');
+        locationButton.on('click',function(){
+            if(!navigator.geolocation){
+                return alert('Geolocation not supported by the browser');
+            }
+
+            navigator.geolocation.getCurrentPosition(function(position){
+                socket.emit('createLocationMessage',{
+                    latitude:position.coords.latitude,
+                    longitude:position.coords.longitude
+                });
+            },function(){
+                alert('Not able to fetch location');
+            });
+        });
+
+        socket.on('newLocationMessage',function(locationMessage){
+            console.log('new Message',locationMessage);
+            var li=jQuery('<li></li>');
+            var a=jQuery('<a target="_blank">My current location</a>')
+            li.text(`${locationMessage.from}: `);
+            a.attr('href',locationMessage.url);
+            li.append(a);
+            jQuery('#messages').append(li);
+        });

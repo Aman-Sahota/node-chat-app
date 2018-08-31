@@ -3,7 +3,7 @@ const express=require('express');
 const http=require('http');
 const socketIO=require('socket.io');
 
-var {generateMessage}=require('./utils/message');
+var {generateMessage,generateLocationMessage}=require('./utils/message');
 
 const publicPath=path.join(__dirname,'../public');
 var app=express();
@@ -36,6 +36,10 @@ io.on('connection',(socket)=>{
         //     text:message.text,
         //     createdAt:new Date().getTime()
         // });
+    });
+
+    socket.on('createLocationMessage',(location)=>{
+        io.emit('newLocationMessage',generateLocationMessage('Admin',location.latitude,location.longitude));
     });
 
     socket.on('disconnect',()=>{
