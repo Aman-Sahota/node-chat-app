@@ -22,9 +22,10 @@ io.on('connection',(socket)=>{
 
     //socket serves a single pipeline and io serves all
     //meaning when io.emit runs it emits to all pipelines
-    socket.on('createMessage',(message)=>{
+    socket.on('createMessage',(message,callback)=>{
         console.log('createMessage',message);
         io.emit('newMessage',generateMessage(message.from,message.text));
+        callback('this is from server');
 
         //With io.emit in the socket.on(line 19) the socket itself also got
         //newMessage alert but if we use socket.braoadcast.emit it sends to all 
