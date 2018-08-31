@@ -25,7 +25,7 @@ io.on('connection',(socket)=>{
     socket.on('createMessage',(message,callback)=>{
         console.log('createMessage',message);
         io.emit('newMessage',generateMessage(message.from,message.text));
-        callback('this is from server');
+        callback();
 
         //With io.emit in the socket.on(line 19) the socket itself also got
         //newMessage alert but if we use socket.braoadcast.emit it sends to all 

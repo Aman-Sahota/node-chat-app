@@ -16,15 +16,17 @@ var socket=io();
             //below i will add this li to the ol in Index.html file
             jQuery('#messages').append(li);
         });
-        
+
         jQuery('#message-form').on('submit',function(e){
             e.preventDefault();
 
+            var messageTextBox=jQuery('[name=message]');
+
             socket.emit('createMessage',{
                 from:'User',
-                text:jQuery('[name=message]').val()
+                text:messageTextBox.val()
             },function(){
-
+                messageTextBox.val(null);
             });
         });
 
@@ -34,12 +36,16 @@ var socket=io();
                 return alert('Geolocation not supported by the browser');
             }
 
+            locationButton.attr('disabled','disabled').text('sending location...');
+
             navigator.geolocation.getCurrentPosition(function(position){
+                locationButton.removeAttr('disabled').text('Send location');
                 socket.emit('createLocationMessage',{
                     latitude:position.coords.latitude,
                     longitude:position.coords.longitude
                 });
             },function(){
+                locationButton.removeAttr('disabled').text('Send location');
                 alert('Not able to fetch location');
             });
         });
