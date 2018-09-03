@@ -8,9 +8,10 @@ var socket=io();
         });
 
         socket.on('newMessage',function(message){
+            var formattedTime=moment(message.createdAt).format('h:mm a');
             console.log('new Message',message);
             var li=jQuery('<li></li>');
-            li.text(`${message.from}:${message.text}`);
+            li.text(`${message.from} ${formattedTime}:${message.text}`);
 
             //above i simply created a new li(tag) and set its value
             //below i will add this li to the ol in Index.html file
@@ -52,9 +53,10 @@ var socket=io();
 
         socket.on('newLocationMessage',function(locationMessage){
             console.log('new Message',locationMessage);
+            var formattedTime=moment(locationMessage.createdAt).format('h:mm a');
             var li=jQuery('<li></li>');
             var a=jQuery('<a target="_blank">My current location</a>')
-            li.text(`${locationMessage.from}: `);
+            li.text(`${locationMessage.from} ${formattedTime}: `);
             a.attr('href',locationMessage.url);
             li.append(a);
             jQuery('#messages').append(li);
